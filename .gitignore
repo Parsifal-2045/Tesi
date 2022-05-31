@@ -5,3 +5,7 @@
 main.pdf
 *.toc
 *.synctex.gz
+*.blg
+*.bbl
+*.xml
+*.bcf
