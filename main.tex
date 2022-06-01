@@ -85,19 +85,14 @@ Questa tesi si pone l'obiettivo di approfondire le potenzialità di SYCL, un mod
 
 Il \autoref{ch:acceleratori} di questa tesi introduce brevemente gli acceleratori di particelle. Il \autoref{ch:clustering} approfondisce gli algoritmi di ricostruzione, con particolare attenzione a CLUE, un algoritmo di clustering sviluppato da CMS, uno dei quattro esperimenti di LHC, e specificamente pensato per essere estremamente parallelizabile e flessibile. Nel successivo \autoref{ch:sycl} viene introdotto il modello di programmazione SYCL, con un accenno alle sue varie implementazioni e un focus su Data Parallel C++: la versione scelta per tradurre CLUE. Infine, nel \autoref{ch:clue} è riportata l'applicazione dello standard SYCL all'algoritmo CLUE di CMS insieme a un'analisi delle prestazioni ottenute.
 
-\chapter{Gli acceleratori di particelle}
-\label{ch:acceleratori}
+\include{chapters/1_acceleratori.tex}
 
+\include{chapters/2_clustering.tex}
 
-\chapter{Algoritmi di ricostruzione e CLUE}
-\label{ch:clustering}
-Prova reference\cite{CLUE}
+\include{chapters/3_sycl.tex}
 
-\chapter{Programmazione eterogenea e SYCL}
-\label{ch:sycl}
+\include{chapters/4_clue.tex}
 
-\chapter{La versione SYCL di CLUE}
-\label{ch:clue}
 
 \bibliographystyle{plain}
 \bibliography{ref}
