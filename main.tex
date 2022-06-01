@@ -2,6 +2,14 @@
 \usepackage[italian]{babel}
 \usepackage{newlfont}
 \usepackage{color}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\hypersetup{
+    colorlinks,
+    linkcolor={red!50!black},
+    citecolor={blue!50!black},
+    urlcolor={blue!80!black}
+}
 
 
 \textwidth=450pt\oddsidemargin=0pt
@@ -69,19 +77,27 @@ Anno Accademico 2021/2022
 
 \addcontentsline{toc}{chapter}{Introduzione}
 \chapter*{Introduzione}
-Non si può parlare di un algoritmo di clustering senza spiegarne l'utilità nel constesto della ricerca nella fisica delle particelle. In Europa, il centro di ricerca che si occupa di tale ambito è il CERN (Conseil Européen pour la Recherche Nucléaire). Per studiare il mondo dell'infinitamente piccolo si usano macchine chiamate acceleratori di particelle: queste accelerano fasci di particelle, spesso cariche come i protoni, a velocità il quanto più vicine possibile a quella della luce, per poi farli scontrare tra loro in corrispondenza di specifici punti in cui sono presenti dei dispositivi rivelatori. L'energia derivante dall'impatto dei fasci consente la produzione di nuove particelle ``figlie", che si disperdono in tutte le direzioni attraversando i diversi strati del rivelatore. In quest'ottica, le collisioni di più grande interesse sono quelle a maggior contenuto energetico e più rare, poiché consentono di definire nuovi limiti nella conoscenza dell'infinitamente piccolo. Per questo motivo, l'acceleratore di punta del CERN, il Large Hadron Collider (LHC), è soggetto ad aggiornamenti hardware in grado di aumentare la sensibilità dei rivelatori o anche di aumentare l'energia dei fasci coinvolti. A causa di tali aggiornamenti, la quantità di dati raccolti in ogni istante dai rivelatori di LHC aumenta notevolmente di volta in volta e per questo è necessario che il software, responsabile dell'elaborazione e del filtraggio dei dati raccolti, venga aggiornato di conseguenza. Si distinguono due tipi di algoritmi: di trigger e di clustering. Il primo tipo si occupa di filtrare i dati in tempo reale, selezionando e conservando solo quelli che potrebbero contenere nuova fisica; invece, gli algoritmi di ricostruzione hanno il compito di elaborare i dati raccolti in modo da ricostruire gli avvenimenti immediatamente successivi a ciascuna collisione.
+Non si può parlare di un algoritmo di clustering senza spiegarne l'utilità nel constesto della ricerca nella fisica delle particelle. In Europa, il centro di ricerca che si occupa di tale ambito è il CERN (Conseil Européen pour la Recherche Nucléaire). Per studiare il mondo dell'infinitamente piccolo si usano macchine chiamate acceleratori di particelle: queste accelerano fasci di particelle, spesso cariche come i protoni, a velocità il quanto più vicine possibile a quella della luce, per poi farli scontrare tra loro in corrispondenza di specifici punti in cui sono presenti dei dispositivi rivelatori. L'energia derivante dall'impatto dei fasci consente la produzione di nuove particelle ``figlie", che si disperdono in tutte le direzioni attraversando i diversi strati del rivelatore. In quest'ottica, le collisioni di più grande interesse sono quelle a maggior contenuto energetico e più rare, poiché consentono di definire nuovi limiti nella conoscenza dell'infinitamente piccolo. Per questo motivo, l'acceleratore di punta del CERN, il Large Hadron Collider (LHC), è soggetto ad aggiornamenti hardware in grado di aumentare la sensibilità dei rivelatori o anche di aumentare l'energia dei fasci coinvolti. A causa di tali aggiornamenti, la quantità di dati raccolti in ogni istante dai rivelatori di LHC aumenta notevolmente di volta in volta e per questo è necessario che il software, responsabile dell'elaborazione e del filtraggio dei dati raccolti, venga aggiornato di conseguenza. Si distinguono due tipi di algoritmi: di trigger e di ricostruzione. Il primo tipo si occupa di filtrare i dati in tempo reale, selezionando e conservando solo quelli che potrebbero contenere nuova fisica; invece, gli algoritmi di ricostruzione hanno il compito di elaborare i dati raccolti in modo da ricostruire gli avvenimenti immediatamente successivi a ciascuna collisione.
 
 Dunque, è necessario investire in ricerca e sviluppo per poter produrre del software in grado di estrarre il meglio dalle nuove potenzialità hardware dell'acceleratore. Parte di tale ricerca si focalizza su risorse computazionali di tipo eterogeneo. Questo significa che il software deve essere eseguibile su dispositivi di diversa natura, come CPU, GPU e FPGA. Un approccio con implementazione differente per ogni tipo di dispositivo risulterebbe estremamente impratico e costringerebbe a riscrivere codice dipendentemente dal dispositivo che dovrà eseguirlo. Per questo, bisogna individuare uno standard che permetta di implementare un'unica versione del software compatibile con quante più architetture differenti possibile, mantendendo prestazioni il più vicino possibile al codice nativo di ciascuna. 
 
+Questa tesi si pone l'obiettivo di approfondire le potenzialità di SYCL, un modello di programmazione astratto basato sullo standard ISO C++. Grazie a tale implementazione, è possibile scrivere un unico codice sorgente che può essere compilato ed eseguito su diversi dispostivi. In particolare, l'esperimento CMS si sta occupando di una sua particolare implementazione, Data Parallel C++, con l'obiettivo di valutarne le performance prima di una possibile adozione. 
+
+Il \autoref{ch:acceleratori} di questa tesi introduce brevemente gli acceleratori di particelle. Il \autoref{ch:clustering} approfondisce gli algoritmi di ricostruzione, con particolare attenzione a CLUE, un algoritmo di clustering sviluppato da CMS, uno dei quattro esperimenti di LHC, e specificamente pensato per essere estremamente parallelizabile e flessibile. Nel successivo \autoref{ch:sycl} viene introdotto il modello di programmazione SYCL, con un accenno alle sue varie implementazioni e un focus su Data Parallel C++: la versione scelta per tradurre CLUE. Infine, nel \autoref{ch:clue} è riportata l'applicazione dello standard SYCL all'algoritmo CLUE di CMS insieme a un'analisi delle prestazioni ottenute.
+
 \chapter{Gli acceleratori di particelle}
+\label{ch:acceleratori}
 
 
-\chapter{Algoritmi di clustering e CLUE}
+\chapter{Algoritmi di ricostruzione e CLUE}
+\label{ch:clustering}
 Prova reference\cite{CLUE}
 
 \chapter{Programmazione eterogenea e SYCL}
+\label{ch:sycl}
 
 \chapter{La versione SYCL di CLUE}
+\label{ch:clue}
 
 \bibliographystyle{plain}
 \bibliography{ref}
