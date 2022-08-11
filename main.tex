@@ -1,5 +1,5 @@
 \documentclass[12pt,a4paper]{report}
-\usepackage[italian]{babel}
+\usepackage[english]{babel}
 \usepackage{newlfont}
 \usepackage{color}
 \usepackage{hyperref}
@@ -31,11 +31,8 @@ Corso di Laurea in Fisica}}
 
 \vspace{23mm}
 
-\begin{center}\textcolor{red}{
-%
-% INSERIRE IL TITOLO DELLA TESI
-%
-{\LARGE{\bf TITOLO TESI}}\\
+\begin{center}\textcolor{black}{
+{\LARGE{\bf PORTING RECONSTRUCTION \\ ALGORITHMS FOR HIGH ENERGY \\ PHYSICS USING SYCL ABSTRACTION \\ LAYER \\}}
 }\end{center}
 
 \vspace{50mm} \par \noindent
@@ -62,12 +59,9 @@ Corso di Laurea in Fisica}}
 Luca Ferragina}}
 \end{minipage}
 
-\vspace{40mm}
+\vspace{20mm}
 
 \begin{center}
-%
-% INSERIRE L'ANNO ACCADEMICO
-%
 Anno Accademico 2021/2022
 \end{center}
 
@@ -76,24 +70,22 @@ Anno Accademico 2021/2022
 \tableofcontents
 
 
-\chapter*{Introduzione}
-\addcontentsline{toc}{chapter}{Introduzione}
+\chapter*{Introduction}
+\addcontentsline{toc}{chapter}{Introduction}
 
-Non si può parlare di un algoritmo di clustering senza spiegarne l'utilità nel constesto della ricerca nella fisica delle particelle. In Europa, il centro di ricerca che si occupa di tale ambito è il CERN (Conseil Européen pour la Recherche Nucléaire). Per studiare il mondo dell'infinitamente piccolo si usano macchine chiamate acceleratori di particelle: queste accelerano fasci di particelle, spesso cariche come i protoni, a velocità il quanto più vicine possibile a quella della luce, per poi farli scontrare tra loro in corrispondenza di specifici punti in cui sono presenti dei dispositivi rivelatori. L'energia derivante dall'impatto dei fasci consente la produzione di nuove particelle ``figlie", che si disperdono in tutte le direzioni attraversando i diversi strati del rivelatore. In quest'ottica, le collisioni di più grande interesse sono quelle a maggior contenuto energetico e più rare, poiché consentono di definire nuovi limiti nella conoscenza dell'infinitamente piccolo. Per questo motivo, l'acceleratore di punta del CERN, il Large Hadron Collider (LHC), è soggetto ad aggiornamenti hardware in grado di aumentare la sensibilità dei rivelatori o anche di aumentare l'energia dei fasci coinvolti. A causa di tali aggiornamenti, la quantità di dati raccolti in ogni istante dai rivelatori di LHC aumenta notevolmente di volta in volta e per questo è necessario che il software, responsabile dell'elaborazione e del filtraggio dei dati raccolti, venga aggiornato di conseguenza. Si distinguono due tipi di algoritmi: di trigger e di ricostruzione. Il primo tipo si occupa di filtrare i dati in tempo reale, selezionando e conservando solo quelli che potrebbero contenere nuova fisica; invece, gli algoritmi di ricostruzione hanno il compito di elaborare i dati raccolti in modo da ricostruire gli avvenimenti immediatamente successivi a ciascuna collisione.
+The main aim of high energy physics research is to study particles at the most fundamental level in order to discover how they work and interact. In order to gain insight on the inner workings of matter, it is necessary to make particles reach extremely high energies. Many particles accelerators have been built, but the leading one in terms of highest energy reached is currently the Large Hadron Collider (LHC), operated by CERN (Counseil Européen pour la Recherche Nucléaire). In LHC, protons are accelerated to velocities close to the one of the light and are collimated in two beams that are made to collide at specific sites where the detectors are located. CERN is currently home to four main experiments: ALICE, LHCb, CMS and ATLAS, of which the latter two are general purpose experiments looking to improve our knowledge of the Standard Model. When protons collide at such high energies, many other particles are produced and scattered in every direction. Depending on the charge and the energy possessed by each of these particle, they pass through some or all the slices of the detectors and thus can be identified. Since higher energy collision produce more exotic particles with higher energies, these are the most interesting for the cutting-edge research. For this reason, LHC is periodically subject to hardware upgrades that have mainly two aims. First, increase the energy of the colliding beams up to the theoretical limit of the machine of 7 TeV per beam, which translates in collisions with 14 TeV of energy. Secondly, increase the sensibility of the detectors and the number of collisions observed per unit time (luminosity). Every upgrade has the result of producing more particles per event, which means that more and more data needs to be collected and processed extremely quickly. This is why, together with hardware upgrades, the detectors' software must go through regular updates. In particular, we can distinguish two kinds of algorithms used to process the data coming from the detectors: trigger and reconstruction algorithms. The first kind filters the collisions' data in real time selecting and saving only events that satisfy particular conditions that might make them candidates for new physics. Reconstruction algorithms are used to study these potentially interesting events and aim to link every observed particle with its respective producer. In doing so, these algorithms reproduce the chain of decays that have occurred between the actual collision and the detectors. \newline
+In this context, the CMS experiment has invested part of its resources to explore the possibilities offered by heterogeneous computing. This means that different parts of the software can run simultaneously on different kinds of devices like CPUs, GPUs or FPGAs. Recently, a push has been made to improve the portability of code betweed different architectures and back-ends. Since writing completely different code for every device would be extremely inefficient, some abstraction layers have been considered. In every case, the main objective is to produce an executable that can run on many different architectures while maintaining a level of performance as close as possible to the native implementation. \newline
+This thesis will discuss the possibilities offered by one of these abstraction layers: SYCL, which is based on the ISO C++ standard. In particular, we will discuss the porting experience of one particular CMS clustering algorithm from CUDA code, designed to run exclusively on NVIDIA GPUs, to SYCL with a focus on the performance analysis. \newline
+In \autoref{ch:1} we will introduce CLUE: the algorithm chosen for this porting experience and briefly describe the surrounding CMS framework.
+In \autoref{ch:2} we will present the SYCL standard and its various implementations, going into more details on Data Parallel C++ as the one chosen to carry out the porting. Finally, in \autoref{ch:3} we will present the porting experience and the results obtained.
 
-Dunque, è necessario investire in ricerca e sviluppo per poter produrre del software in grado di estrarre il meglio dalle nuove potenzialità hardware dell'acceleratore. Parte di tale ricerca si focalizza su risorse computazionali di tipo eterogeneo. Questo significa che il software deve essere eseguibile su dispositivi di diversa natura, come CPU, GPU e FPGA. Un approccio con implementazione differente per ogni tipo di dispositivo risulterebbe estremamente impratico e costringerebbe a riscrivere codice dipendentemente dal dispositivo che dovrà eseguirlo. Per questo, bisogna individuare uno standard che permetta di implementare un'unica versione del software compatibile con quante più architetture differenti possibile, mantendendo prestazioni il più vicino possibile al codice nativo di ciascuna. 
 
-Questa tesi si pone l'obiettivo di approfondire le potenzialità di SYCL, un modello di programmazione astratto basato sullo standard ISO C++. Grazie a tale implementazione, è possibile scrivere un unico codice sorgente che può essere compilato ed eseguito su diversi dispostivi. In particolare, l'esperimento CMS si sta occupando di una sua particolare implementazione, Data Parallel C++, con l'obiettivo di valutarne le performance prima di una possibile adozione. 
+\include{chapters/1_CLUE}
 
-Il \autoref{ch:acceleratori} di questa tesi introduce brevemente gli acceleratori di particelle. Il \autoref{ch:clustering} approfondisce gli algoritmi di ricostruzione, con particolare attenzione a CLUE, un algoritmo di clustering sviluppato da CMS, uno dei quattro esperimenti di LHC, e specificamente pensato per essere estremamente parallelizabile e flessibile. Nel successivo \autoref{ch:sycl} viene introdotto il modello di programmazione SYCL, con un accenno alle sue varie implementazioni e un focus su Data Parallel C++: la versione scelta per tradurre CLUE. Infine, nel \autoref{ch:clue} è riportata l'applicazione dello standard SYCL all'algoritmo CLUE di CMS insieme a un'analisi delle prestazioni ottenute.
+\include{chapters/2_SYCL}
 
-\include{chapters/1_acceleratori.tex}
+\include{chapters/3_porting}
 
-\include{chapters/2_clustering.tex}
-
-\include{chapters/3_sycl.tex}
-
-\include{chapters/4_clue.tex}
 
 
 \bibliographystyle{plain}
