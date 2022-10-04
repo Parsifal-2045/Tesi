@@ -2,9 +2,9 @@
 \label{ch:2}
 \section{Standard}
 \label{ch:sycl_standard}
-SYCL is an abstraction layer for heterogeneous computing open source end royalty free, maintained by Khronos Group. At its core, SYCL proposes a more flexible and simple way to write code for multiple devices, thus improving code portability and in general, simplifying the maintenance of code. On a high level, SYCL defines a library which allows programmers to write a single source code to be executed on different devices thanks to the SYCL runtime. A standard SYCL application contains code compliant to the ISO C++ standard which can be roughly be divided into host code, executed by the CPU, and device code, enclosed in $kernels$, to be executed by one or more heterogeneous devices. SYCL kernels are basically C++ function objects, so objects of some class which overload the "function call operator" ().For this reason, simple kernels are usually implemented as lambdas. Moreover, device code compilation is more complicated than standard host code compilation, we will explore the added complexity in the following sections. 
+SYCL is an abstraction layer for heterogeneous computing open source end royalty free, maintained by Khronos Group. At its core, SYCL proposes a more flexible and simple way to write code for multiple devices, thus improving code portability and in general, simplifying the maintenance of code. On a high level, SYCL defines a library which allows programmers to write a single source code to be executed on different devices thanks to the SYCL runtime. A standard SYCL application contains code compliant to the ISO C++ standard which can be roughly be divided into host code, executed by the CPU, and device code, enclosed in $kernels$, to be executed by one or more heterogeneous devices. SYCL kernels are basically C++ function objects, so objects of some class which overload the "function call operator" ().For this reason, simple kernels are usually implemented as lambdas. Moreover, device code compilation is more complicated than standard host code compilation, the added complexity is explored in the following sections. 
 
-As previously stated, SYCL tries to be as compliant as possible to ISO C++ standard so much that all of the host code can, in theory, be compiled with a standard C++ compiler to produce an executable that can run on the CPU. This is true until any kernel is called or any OpenCL\footnote{OpenCL™ (Open Computing Language) is an open, royalty-free standard for cross-platform, parallel programming of diverse accelerators found in supercomputers, cloud servers, personal computers, mobile devices and embedded platforms. \cite{OpenCL}} integration is required. Some C++ features are not available in SYCL as to guarantee the highest degree of portability across the most different kinds of devices. A couple of examples are the inability to use function pointers or call virtual functions inside kernels. Moreover, the whole error handling system is different from standard C++, mainly for the need to throw and catch asynchronous exceptions. Since heterogeneous computing is becoming increasingly more relevant year over year, Khronos is also cooperating with the C++ committee to integrate heterogeneous programming into the standard. The following code example \ref{code:simple_ex} shows the basic syntax of a SYCL application.
+As previously stated, SYCL tries to be as compliant as possible to ISO C++ standard so much that all of the host code can, in theory, be compiled with a standard C++ compiler to produce an executable that can run on the CPU. This is true until any kernel is called or any OpenCL\footnote{OpenCL™ (Open Computing Language) is an open, royalty-free standard for cross-platform, parallel programming of diverse accelerators found in supercomputers, cloud servers, personal computers, mobile devices and embedded platforms. \cite{OpenCL}} integration is required. Some C++ features are not available in SYCL as to guarantee the highest degree of portability across the most different kinds of devices. A couple of examples are the inability to use function pointers or call virtual functions inside kernels. Moreover, the whole error handling system is different from standard C++, mainly for the need to throw and catch asynchronous exceptions. Since heterogeneous computing is becoming increasingly more relevant year over year, Khronos is also cooperating with the C++ committee to integrate heterogeneous programming into the standard. The following code example~\ref{code:simple_ex} shows the basic syntax of a SYCL application.
 
 \begin{figure}[ht!]
 \renewcommand{\figurename}{Code}
@@ -46,16 +46,16 @@ int main()
 \label{code:simple_ex}
 \end{figure}
 
-Here we are going to highlight the most important characteristics, some of them will be discussed in more details in the following sections. First up, we distinguish device code from host code: 
+Here the most important characteristics are highlighted, with some of them discussed in greater detail in the following sections. First up, the distinction between device code and host code: 
 \begin{itemize}
     \item Line 19-25 is device code, every operation inside a sycl::queue::submit() will be executed on the device and the host will only take care of scheduling the work;
     \item All of the other code will be executed on the host. This includes device selection and every memory operation on it.
 \end{itemize}
-This separation is also tied to a different compilation model which will be explained in more detail in section \ref{ch:compilation_model}. On a general level, we start by creating a \Verb "sycl::queue", this object is tied to a specific device (that can be a CPU, GPU or FPGA) and is used to manage its memory and the scheduling of jobs to be executed on it. Device on the memory is allocated through the \Verb "sycl::malloc" function and freed using \Verb "sycl::free". Note that in both cases a queue has to be provided to get the context and device on which to allocate or free the memory. Finally, note that after each queue operation we explicitly wait for completion, we will discuss at lenght data dependencies and synchronization in section \ref{ch:synchronization}. Here we just note that, in general, this is not strictly necessary, depending on the goals and structure of the program.
+This separation is also tied to a different compilation model which will be explained in more detail in section~\ref{ch:compilation_model}. On a general level, the SYCL integration starts by creating a \Verb "sycl::queue", this object is tied to a specific device (that can be a CPU, GPU or FPGA) and is used to manage its memory and the scheduling of jobs to be executed on it. Device on the memory is allocated through the \Verb "sycl::malloc" function and freed using \Verb "sycl::free". Note that in both cases a queue has to be provided to get the context and device on which to allocate or free the memory. Finally, note that after each queue operation there is an explicitly \Verb "wait" used to synchronize the completion of the kernel. Data dependencies and synchronization are discussed at length in section~\ref{ch:synchronization}. In general, this is not strictly necessary, depending on the goals and structure of the program.
 
 \section{Implementations}
 \label{ch:sycl_implementations}
-Being an open-source project, means that SYCL has many different implementations which all support different back-ends. The main SYCL implementations are schematically reported in figure \ref{fig:sycl_implementations}.
+Being an open-source project, means that SYCL has many different implementations which all support different backends. The main SYCL implementations are schematically reported in figure~\ref{fig:sycl_implementations}.
 
 \begin{figure}[H]
     \centering
@@ -65,11 +65,11 @@ Being an open-source project, means that SYCL has many different implementations
     \label{fig:sycl_implementations}
 \end{figure}
 
-In general, as of SYCL 2020, an implementation is made of four different components, represented in figure \ref{fig:sycl_implementations_backend}: 
+In general, as of SYCL 2020, an implementation is made of four different components, represented in figure~\ref{fig:sycl_implementations_backend}: 
 \begin{itemize}
     \item SYCL interface: a template library that provides the developers with the features of SYCL; 
     \item SYCL runtime: library that schedules and executes work on both the host and devices. Specifically, it schedules memory operations, launches kernels and tracks data dependencies;
-    \item Backend interface: point of contact between the SYCL runtime and a specific device. Some example of back-ends are OpenCL (used to interface with CPUs), CUDA (used to interface with NVIDIA GPUs), Level Zero (used to interface with Intel GPUs) and HIP/ROCM (used to interface with AMD GPUs). Not all back-ends are supported in all the implementations. 
+    \item Backend interface: point of contact between the SYCL runtime and a specific device. Some example of backends are OpenCL (used to interface with CPUs), CUDA (used to interface with NVIDIA GPUs), Level Zero (used to interface with Intel GPUs) and HIP/ROCM (used to interface with AMD GPUs). Not all backends are supported in all the implementations. 
     \item SYCL device compiler: C++ compiler used to identify SYCL kernels and compile them down to an Intermediate Representation (IR) to then be linked with code compiled by the host compiler.
 \end{itemize}
 
@@ -82,16 +82,16 @@ In general, as of SYCL 2020, an implementation is made of four different compone
 \end{figure}
 
 \subsubsection{OneAPI and Data Parallel C++}
-Data Parallel C++ is the SYCL implementation developed by Intel and integrated in oneAPI, their toolkit for heterogeneous programming \cite{oneAPI}. This implementation is compliant with the SYCL 2020 standard and thus supports the Universal Shared Memory model, as described in section \ref{ch:memory_management}. OneAPI includes a lowl level hardware interface known as Level Zero. This back-end interfaces directly with the SYCL runtime and is used to execute code on Intel GPUs and FPGAs that support it. As far as other back-ends are concerned, oneAPI officially supports OpenCL to interface with CPUs and its support for CUDA is under development. Its native support for USM and the auxiliary tools provided, as well as native support for Intel hardware, are what ultimately brought us to chose this specific SYCL implementation to explore its possibility in high energy physics reconstruction software. In particular, we want to highlight a specific support tool for developers who are first exploring SYCL capabilities. Included in oneAPI, there is a compatibility tool, Data Parallel Compatibility Tool (DPCT), which can automatically convert CUDA code into SYCL code. While the output from the tool is not always correct and some specific functions or features are not translated entirely, the compatibility tool surely help to lay the ground work to move from CUDA code to SYCL code, easing the refining work that needs to be done by the developer.
+Data Parallel C++ is the SYCL implementation developed by Intel and integrated in oneAPI, their toolkit for heterogeneous programming \cite{oneAPI}. This implementation is compliant with the SYCL 2020 standard and thus supports the Universal Shared Memory model, as described in section~\ref{ch:memory_management}. OneAPI includes a low level hardware interface known as Level Zero. This backend interfaces directly with the SYCL runtime and is used to execute code on Intel GPUs and FPGAs that support it. As far as other backends are concerned, oneAPI officially supports OpenCL to interface with CPUs and its support for CUDA is under development. Its native support for USM and the auxiliary tools provided, as well as native support for Intel hardware, are what ultimately brought us to chose this specific SYCL implementation to explore its possibility in high energy physics reconstruction software. A particular highlight is a support tool for developers who are first exploring SYCL capabilities. Included in oneAPI, there is a compatibility tool, Data Parallel Compatibility Tool (DPCT), which can automatically convert CUDA code into SYCL code. While the output from the tool is not always correct and some specific functions or features are not translated entirely, the compatibility tool surely help to lay the ground work to move from CUDA code to SYCL code, easing the refining work that needs to be done by the developer.
 The Data Parallel C++ compiler, \Verb "dpcpp", is regularly forked from the open source LLVM project \cite{dpcpp}.
 
 \section{Compilation model}
 \label{ch:compilation_model}
-SYCL follows a single-source, multiple-pass compilation model. Since the source code is just one, the kernels are standard C++ function objects\footnote{In C++, a function object is a generic class which implements an overload of the operator function call \Verb "()".}, generally implemented as lambda expressions. Because host and device code are different, the code passes through a compiler twice: first through the host compiler to produce a CPU object and then through the device compiler. This second pass on device code, produces a device IR for the specific architecture of the targeted device. Finally, the CPU object is linked with the IR to produce a single executable with code for both the CPU and device. What we have just described is generally known as Ahead of Time (AoT) compilation model. The SYCL implementation we have chosen to carry out the porting, oneAPI, also allows to compile only the host code while not targeting any specific device. In this case, the device code will be compiled only at run time using the Just in Time (JiT) compiler. This gives the user more flexibility to run on many different supported devices while not necessarily having access to a compiler or compiled code for a specific device or architecture (as long as both are supported by the implementation).
+SYCL follows a single-source, multiple-pass compilation model. Since the source code is just one, the kernels are standard C++ function objects\footnote{In C++, a function object is a generic class which implements an overload of the operator function call \Verb "()".}, generally implemented as lambda expressions. Because host and device code are different, the code passes through a compiler twice: first through the host compiler to produce a CPU object and then through the device compiler. This second pass on device code, produces a device IR for the specific architecture of the targeted device. Finally, the CPU object is linked with the IR to produce a single executable with code for both the CPU and device. What was just described is generally known as Ahead of Time (AoT) compilation model. The SYCL implementation chosen to carry out the porting, oneAPI, also allows to compile only the host code while not targeting any specific device. In this case, the device code will be compiled only at run time using the Just in Time (JiT) compiler. This gives the user more flexibility to run on many different supported devices while not necessarily having access to a compiler or compiled code for a specific device or architecture (as long as both are supported by the implementation).
 
 \section{Execution model}
 \label{ch:execution_model}
-Every SYCL device is divided into multiple Compute Units (CUs) which are in turn split into Processing Elements (PEs). Every kernel computation will be executed on the PEs of the relevant device. When a kernel is launched, a thread hierarchy gets initialized. The main element in a SYCL thread hierarchy is the ND-range, that is a 1, 2 or 3 dimensional grid of work groups, that are equally sized groups of the same dimensionality. These work groups are in turn divided into work items, as shown in figure \ref{fig:sycl_nd_range}. Diving into the single elements of the hierarchy, we have:
+Every SYCL device is divided into multiple Compute Units (CUs) which are in turn split into Processing Elements (PEs). Every kernel computation will be executed on the PEs of the relevant device. When a kernel is launched, a thread hierarchy gets initialized. The main element in a SYCL thread hierarchy is the ND-range, that is a 1, 2 or 3 dimensional grid of work groups, that are equally sized groups of the same dimensionality. These work groups are in turn divided into work items, as shown in figure~\ref{fig:sycl_nd_range}. Diving into the single elements of the hierarchy, in SYCL, the programmer has access to:
 \begin{itemize}
     \item Work item : a single thread within the thread hierarchy;
     \item Work group : a 1, 2 or 3 dimensional set of threads (work-items) within the thread hierarchy;
@@ -108,7 +108,7 @@ Every SYCL device is divided into multiple Compute Units (CUs) which are in turn
 On some modern hardware platforms there is also the possibility of accessing subsets of the work-items in a
 work-group to execute them with additional scheduling guarantees. These subsets are known as sub-groups. 
 
-In SYCL, work-group size can be left empty and then implementation can set it to the optimal value according to an internal heuristic. Additionally, SYCL does provide a mechanism to get the preferred work-group size. An example on how to do it is shown in code \ref{code:work_group_size}. Typically, choosing a work group size that is a multiple of the preferred one will be enough.
+In SYCL, work-group size can be left empty and then implementation can set it to the optimal value according to an internal heuristic. Additionally, SYCL does provide a mechanism to get the preferred work-group size. An example on how to do it is shown in code~\ref{code:work_group_size}. Typically, choosing a work group size that is a multiple of the preferred one will be enough.
 
 \begin{figure}[ht!]
 \renewcommand{\figurename}{Code}
@@ -163,7 +163,7 @@ Memory allocated through these methods needs to be managed using specific SYCL f
     \item \protect\Verb "sycl::free(ptr, queue)": Frees memory located at \Verb "ptr" and previously allocated usign a SYCL malloc function.
 \end{itemize}
 
-Excluding the last method, the other three are also available as methods of the \Verb "sycl::handler" class, so they can be used inside a \Verb "queue::submit()" scope as demostrated in code \ref{code:handler_copy}.
+Excluding the last method, the other three are also available as methods of the \Verb "sycl::handler" class, so they can be used inside a \Verb "queue::submit()" scope as demostrated in code~\ref{code:handler_copy}.
 
 
 \begin{figure}[ht!]
@@ -179,7 +179,7 @@ q.wait();
 \label{code:handler_copy}
 \end{figure}
 
-We note that in order to allocate and deallocate in SYCL it is necessary to have declared a queue first, as to choose the device on which the memory should be allocated and data copied. Moreover, since copying is asynchronous by default, it is a good practice to always use \Verb "sycl::queue::wait()" after any group of copying actions to prevent segmentation faults or unexpected behaviours. Finally, in SYCL it is not necessary to specify the direction of copying (host-device, device-device, device-host) as it is deduced at run time. We demonstrate the usage of the discussed methods in code \ref{code:sycl_memory}.
+Note that in order to allocate and deallocate in SYCL it is necessary to have declared a queue first, as to choose the device on which the memory should be allocated and data copied. Moreover, since copying is asynchronous by default, it is a good practice to always use \Verb "sycl::queue::wait()" after any group of copying actions to prevent segmentation faults or unexpected behaviours. Finally, in SYCL it is not necessary to specify the direction of copying (host-device, device-device, device-host) as it is deduced at run time. The usage of the discussed methods is exemplified in code~\ref{code:sycl_memory}.
 
 \begin{figure}[ht!]
 \renewcommand{\figurename}{Code}
@@ -210,7 +210,7 @@ SYCL kernel functions are called using one of the following invoke API entries (
     \item \Verb "single_task": The kernel function is executed exactly once;
     \item \Verb "parallel_for": The kernel function is executed ND-range times passing thread identification objects as parameters.
 \end{itemize}
-Examples for both of these kernels' calls are shown in code \ref{code:kernel_execution}.
+Examples for both of these kernels' calls are shown in code~\ref{code:kernel_execution}.
 
 \begin{figure}[ht!]
 \renewcommand{\figurename}{Code}
@@ -239,7 +239,7 @@ A handler can only be constructed by the SYCL runtime and is passed as an argume
 The SYCL kernel function invoke API takes a C++ callable object by value which is most often expressed as a lambda. If local memory is required or work-group size is specified manually, then the corresponding \Verb "nd_range" object must be used as first parameter. In turn, the \Verb "nd_item" associated with the \Verb "nd_range" can be passed inside the kernel and its method for barriers or work-group operation can be used.
 
 
-One tricky issue found when dealing with SYCL kernels is that, as per SYCL specification \cite{sycl_specification}, variables can be passed inside a kernel (\Verb "parallel_for") only by value, moreover the capture of *this is not allowed neither implicitly nor explicitly (in general, this would point to host memory which is not accessible on the device). To resolve this issue you can simply create local copies of all the variables needed inside the kernel before the \Verb "parallel_for" gets called, as shown in code \ref{code:kernel_variables}.
+One tricky issue found when dealing with SYCL kernels is that, as per SYCL specification \cite{sycl_specification}, variables can be passed inside a kernel (\Verb "parallel_for") only by value, moreover the capture of *this is not allowed neither implicitly nor explicitly (in general, this would point to host memory which is not accessible on the device). To resolve this issue you can simply create local copies of all the variables needed inside the kernel before the \Verb "parallel_for" gets called, as shown in code~\ref{code:kernel_variables}.
 
 \begin{figure}[ht!]
 \renewcommand{\figurename}{Code}
@@ -265,7 +265,7 @@ SYCL provides a single synchronization level that is across all of the work item
     \item \Verb "mem_fence": inserts a memory fence on global memory access or local memory access across all work items within a work group.
     \item \Verb "barrier": like the previous one, but it also blocks the execution of each work item within a work group at that point until all of them have reached that point.
 \end{itemize}
-In code \ref{code:item_barriers} we demonstrate synchronization between work-items using a snippet from a parallel reduction kernel.
+In code~\ref{code:item_barriers} synchronization between work-items is demonstrated using a snippet from a parallel reduction kernel.
 
 \begin{figure}[ht!]
 \renewcommand{\figurename}{Code}
@@ -285,8 +285,8 @@ item.barrier();
 
 SYCL does not provide any memory fences or barriers across the entire kernel, only across the work items within a work group.
 
-As previously noted and shown in code \ref{code:simple_ex}, memory operations, in particular memory copies, and kernels execution in SYCL are asynchronous by default. This means that by just scheduling a particular operation, it is not guaranteed that it will be executed before any other, unless relevant data dependencies are specified by the programmer. To be more specific, SYCL queues are by default not in order, meaning that different kernels (i.e. \Verb "queue::submit()") can and will be executed at the same time whenever possible to improve performance.
-If the data used by different kernels is not independent, the queue should be initialized as in-order by passing an extra argument in the constructor as shown in code \ref{code:in_order_queue}.
+As previously noted and shown in code~\ref{code:simple_ex}, memory operations, in particular memory copies, and kernels execution in SYCL are asynchronous by default. This means that by just scheduling a particular operation, it is not guaranteed that it will be executed before any other, unless relevant data dependencies are specified by the programmer. To be more specific, SYCL queues are by default not in order, meaning that different kernels (i.e. \Verb "queue::submit()") can and will be executed at the same time whenever possible to improve performance.
+If the data used by different kernels is not independent, the queue should be initialized as in-order by passing an extra argument in the constructor as shown in code~\ref{code:in_order_queue}.
 
 \begin{figure}[ht!]
 \renewcommand{\figurename}{Code}
@@ -308,7 +308,7 @@ auto q2 = sycl::queue(sycl::default_selector(),
 
 Using an in-order queue corresponds to adding a \Verb "sycl::queue::wait()" after each and every submit. In this way, operations are executed in issue-order on the selected device.
 
-In case the code allows for some kernels to be executed in parallel while others have explicit dependencies, it is possible to use a default queue and specify the desired data dependencies using the member function \Verb "sycl::handler::depends_on()" which can take an event or an array of events as parameters, as shown in code \ref{code:depens_on}. Note that, in this particular example, the second submit has an explicit dependency on the first, so the queue will wait and synchronize before executing it. However, the last submit can be executed as the same time as the first one since no data dependency is specified.
+In case the code allows for some kernels to be executed in parallel while others have explicit dependencies, it is possible to use a default queue and specify the desired data dependencies using the member function \Verb "sycl::handler::depends_on()" which can take an event or an array of events as parameters, as shown in code~\ref{code:depens_on}. Note that, in this particular example, the second submit has an explicit dependency on the first, so the queue will wait and synchronize before executing it. However, the last submit can be executed as the same time as the first one since no data dependency is specified.
 
 \begin{figure}[ht!]
 \renewcommand{\figurename}{Code}
