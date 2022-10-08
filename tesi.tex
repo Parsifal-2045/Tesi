@@ -7,6 +7,7 @@
 \usepackage{graphicx}
 \usepackage{minted}
 \usepackage{caption}
+\usepackage{subcaption}
 \usepackage{multirow}
 
 \newcommand{\source}[1]{\vspace{-5pt} \caption*{ \emph{Source}{#1}} }
@@ -38,10 +39,10 @@ Corso di Laurea in Fisica}}
 \vspace{23mm}
 
 \begin{center}\textcolor{black}{
-{\LARGE{\bf PORTING RECONSTRUCTION \\ ALGORITHMS FOR HIGH ENERGY \\ PHYSICS USING SYCL ABSTRACTION \\ LAYER \\}}
+{\LARGE{\bf DEVELOPMENT OF A \\ HETEROGENEOUS CLUSTERING \\ ALGORITHM FOR PARTICLE SHOWER \\ RECONSTRUCTION IN HIGH ENERGY \\ PHYSICS USING THE SYCL \\ ABSTRACTION LAYER \\}}
 }\end{center}
 
-\vspace{50mm} \par \noindent
+\vspace{35mm} \par \noindent
 
 \begin{minipage}[t]{0.47\textwidth}
 
@@ -63,7 +64,7 @@ Corso di Laurea in Fisica}}
 Luca Ferragina}}
 \end{minipage}
 
-\vspace{20mm}
+\vspace{18mm}
 
 \begin{center}
 Anno Accademico 2021/2022
@@ -73,7 +74,7 @@ Anno Accademico 2021/2022
 
 \begin{abstract}
 \begin{otherlanguage}{italian}
-Nei prossimi anni è atteso un aggiornamento sostanziale di LHC, che prevede di aumentare la luminosità integrata di un fattore 10 rispetto a quella attuale. Tale parametro è proporzionale al numero di collisioni per unità di tempo. Per questo, le risorse computazionali necessarie a tutti i livelli della ricostruzione cresceranno notevolmente. Dunque, la collaborazione CMS ha cominciato già da alcuni anni ad esplorare le possibilità offerte da "heterogeneous computing", ovvero la pratica di dividere il carico di lavoro tra CPU e altri acceleratori dedicati, come ad esempio schede grafiche (GPU). Una delle difficoltà di questo approccio è la necessità di scrivere, testare e mantenere codice diverso per ognuno dei dispositivi su cui dovrà essere eseguito. Questa tesi presenterà la possibilità di tradurre codice per la ricostruzione di eventi in modo che sia eseguibile, performante su diversi dispositivi e senza modifiche sostanziali, tramite SYCL. Quest'ultimo è un livello di astrazione open-source che rispetta lo standard ISO C++. In particolare, questo studio si concentra sul porting di un algoritmo di clustering delle energie, CLUE, usando l'implementazione SYCL supportata da Intel (oneAPI). Inizialmente, è stato tradotto l'algoritmo nella sua versione standalone, principalmente per prendere familiarità con il nuovo linguaggio e per la relativa comodità di confronto delle performance con le versioni native già esistenti. In questo caso, i risultati di performance sono molto simili a quelli di codice CUDA nativo, a parità di hardware. Per testare la fisica, l'algoritmo è stato integrato all'interno di una versione ridotta del framework usato da CMS per l'intera ricostruzione. In questo caso, i risultati sono in linea con le altre implementazioni e mostrano, in alcuni casi, performance superiori ad altri livelli di astrazione adottati da CMS, rendendo dunque SYCL una possibilità interessante per il futuro dell'heterogenous computing nella fisica delle alte energie.
+Nei prossimi anni è atteso un aggiornamento sostanziale di LHC, che prevede di aumentare la luminosità integrata di un fattore 10 rispetto a quella attuale. Tale parametro è proporzionale al numero di collisioni per unità di tempo. Per questo, le risorse computazionali necessarie a tutti i livelli della ricostruzione cresceranno notevolmente. Dunque, la collaborazione CMS ha cominciato già da alcuni anni ad esplorare le possibilità offerte dal calcolo eterogeneo, ovvero la pratica di distribuire la computazione tra CPU e altri acceleratori dedicati, come ad esempio schede grafiche (GPU). Una delle difficoltà di questo approccio è la necessità di scrivere, validare e mantenere codice diverso per ogni dispositivo su cui dovrà essere eseguito. Questa tesi presenta la possibilità di usare SYCL per tradurre codice per la ricostruzione di eventi in modo che sia eseguibile ed efficiente su diversi dispositivi senza modifiche sostanziali. SYCL è un livello di astrazione per il calcolo eterogeneo, che rispetta lo standard ISO C++. Questo studio si concentra sul porting di un algoritmo di clustering dei depositi di energia calorimetrici, CLUE, usando oneAPI: l'implementazione SYCL supportata da Intel. Inizialmente, è stato tradotto l'algoritmo nella sua versione standalone, principalmente per prendere familiarità con SYCL e per la comodità di confronto delle performance con le versioni già esistenti. In questo caso, le prestazioni sono molto simili a quelle di codice CUDA nativo, a parità di hardware. Per validare la fisica, l'algoritmo è stato integrato all'interno di una versione ridotta del framework usato da CMS per la ricostruzione. I risultati fisici sono identici alle altre implementazioni mentre, dal punto di vista delle prestazioni computazionali, in alcuni casi, SYCL produce codice più veloce di altri livelli di astrazione adottati da CMS, presentandosi dunque come una possibilità interessante per il futuro del calcolo eterogeneo nella fisica delle alte energie.
 \end{otherlanguage}
 \end{abstract}
 
@@ -92,6 +93,7 @@ Nei prossimi anni è atteso un aggiornamento sostanziale di LHC, che prevede di 
 \include{chapters/acknowledgements}
 
 \bibliographystyle{IEEEtran}
-\bibliography{ref}
+\phantomsection
 \addcontentsline{toc}{chapter}{Bibliography}
+\bibliography{ref}
 \end{document}
